@@ -9,6 +9,9 @@ set -e
 # debug verbosely.
 #set -x
 
+# set TIMESTAMP
+TIMESTAMP=$( date +%Y%m%d-%H%M )
+
 # Load config vars into environment (from https://devcenter.heroku.com/articles/buildpack-api)
 export_env_dir() {
   env_dir=$1
@@ -109,6 +112,21 @@ function METEOR {
   HOME="$METEOR_DIR" "$METEOR_DIR/.meteor/meteor" $ARGS
 }
 
+AWS_CLI_ROOT_DIR="$CACHE_DIR/aws"
+AWS_CLI_BUNDLE_DIR="$AWS_CLI_ROOT_DIR/bundle"
+AWS_CLI_BIN="$AWS_CLI_ROOT_DIR/aws"
+
+if [ -f "$AWS_CLI_BIN" ]; then
+  echo "-----> Existing aws cli tools found, using it."
+else
+  echo "-----> Installing aws cli tools"
+  mkdir -p "$AWS_CLI_BUNDLE_DIR"
+  curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "$AWS_CLI_ROOT_DIR/awscli-bundle.zip"
+  unzip "$AWS_CLI_ROOT_DIR/awscli-bundle.zip" -d "$AWS_CLI_BUNDLE_DIR"
+  rm "$AWS_CLI_ROOT_DIR/awscli-bundle.zip"
+  $AWS_CLI_BUNDLE_DIR/awscli-bundle/install -b $AWS_CLI_BIN
+fi
+
 #
 # Build the meteor app!
 #
@@ -194,6 +212,13 @@ BUNDLE_DEST=`mktemp -d "$BUILDPACK_DIR/build-XXXX"`
 
 # The actual invocation of `meteor build`!
 METEOR build $BUILD_OPTIONS --server $ROOT_URL $SERVER_ONLY_FLAG --directory $BUNDLE_DEST
+
+if [[ ${S3_STATIC_BUCKET} ]]; then
+  echo "-----> Copying client side assert to s3://$S3_STATIC_BUCKET/$S3_STATIC_PREFIX/$TIMESTAMP"
+  $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY $AWS_CLI_BIN s3 sync "$BUNDLE_DEST/bundle/programs/web.browser" "s3://$S3_STATIC_BUCKET/$S3_STATIC_PREFIX/$TIMESTAMP"
+else
+  echo "-----> Not moving client side assert to s3"
+fi
 
 echo "-----> Moving built slug to $COMPILE_DIR/app"
 mv $BUNDLE_DEST/bundle "$COMPILE_DIR/app"
