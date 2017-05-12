@@ -214,10 +214,11 @@ BUNDLE_DEST=`mktemp -d "$BUILDPACK_DIR/build-XXXX"`
 # The actual invocation of `meteor build`!
 METEOR build $BUILD_OPTIONS --server $ROOT_URL $SERVER_ONLY_FLAG --directory $BUNDLE_DEST
 
+export CLOUDFRONT_PREFIX=$S3_STATIC_PREFIX/$TIMESTAMP
+
 if [[ ${S3_STATIC_BUCKET} ]]; then
   echo "-----> Copying client side assert to s3://$S3_STATIC_BUCKET/$S3_STATIC_PREFIX/$TIMESTAMP"
   $AWS_CLI_BIN s3 cp "$BUNDLE_DEST/bundle/programs/web.browser" "s3://$S3_STATIC_BUCKET/$S3_STATIC_PREFIX/$TIMESTAMP" --recursive --acl public-read
-
 else
   echo "-----> Not moving client side assert to s3"
 fi
