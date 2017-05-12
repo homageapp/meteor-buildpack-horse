@@ -116,7 +116,7 @@ AWS_CLI_ROOT_DIR="$CACHE_DIR/aws"
 AWS_CLI_BUNDLE_DIR="$AWS_CLI_ROOT_DIR/bundle"
 AWS_CLI_BIN="$AWS_CLI_ROOT_DIR/aws"
 
-if [ -f "$AWS_CLI_BUNDLE_DIR" ]; then
+if [ -d "$AWS_CLI_BUNDLE_DIR" ]; then
   echo "-----> Existing aws cli tools found, using it."
   $AWS_CLI_BUNDLE_DIR/awscli-bundle/install -b $AWS_CLI_BIN
 else
