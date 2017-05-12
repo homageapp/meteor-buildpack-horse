@@ -10,7 +10,7 @@ set -e
 #set -x
 
 # set TIMESTAMP
-TIMESTAMP=$( date +%Y%m%d-%H%M )
+export TIMESTAMP=$( date +%Y%m%d-%H%M )
 
 # Load config vars into environment (from https://devcenter.heroku.com/articles/buildpack-api)
 export_env_dir() {
@@ -116,8 +116,9 @@ AWS_CLI_ROOT_DIR="$CACHE_DIR/aws"
 AWS_CLI_BUNDLE_DIR="$AWS_CLI_ROOT_DIR/bundle"
 AWS_CLI_BIN="$AWS_CLI_ROOT_DIR/aws"
 
-if [ -f "$AWS_CLI_BIN" ]; then
+if [ -f "$AWS_CLI_BUNDLE_DIR" ]; then
   echo "-----> Existing aws cli tools found, using it."
+  $AWS_CLI_BUNDLE_DIR/awscli-bundle/install -b $AWS_CLI_BIN
 else
   echo "-----> Installing aws cli tools"
   mkdir -p "$AWS_CLI_BUNDLE_DIR"
@@ -216,6 +217,7 @@ METEOR build $BUILD_OPTIONS --server $ROOT_URL $SERVER_ONLY_FLAG --directory $BU
 if [[ ${S3_STATIC_BUCKET} ]]; then
   echo "-----> Copying client side assert to s3://$S3_STATIC_BUCKET/$S3_STATIC_PREFIX/$TIMESTAMP"
   $AWS_CLI_BIN s3 sync "$BUNDLE_DEST/bundle/programs/web.browser" "s3://$S3_STATIC_BUCKET/$S3_STATIC_PREFIX/$TIMESTAMP"
+
 else
   echo "-----> Not moving client side assert to s3"
 fi
