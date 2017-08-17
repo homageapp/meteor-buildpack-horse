@@ -220,7 +220,7 @@ if [[ ${S3_STATIC_BUCKET} ]]; then
   echo "-----> Copying client side assert to s3://$S3_STATIC_BUCKET/$S3_STATIC_PREFIX/$TIMESTAMP"
   $AWS_CLI_BIN s3 sync "$BUNDLE_DEST/bundle/programs/web.browser" "s3://$S3_STATIC_BUCKET/$S3_STATIC_PREFIX/$TIMESTAMP" --acl public-read
   echo "-----> Duplicating images to s3://$S3_STATIC_BUCKET/$S3_STATIC_PREFIX/$TIMESTAMP"
-  $AWS_CLI_BIN s3 sync "$BUNDLE_DEST/bundle/programs/web.browser/app/images" "s3://$S3_STATIC_BUCKET/$S3_STATIC_PREFIX/$TIMESTAMP" --acl public-read
+  $AWS_CLI_BIN s3 sync "$BUNDLE_DEST/bundle/programs/web.browser/app/images" "s3://$S3_STATIC_BUCKET/$S3_STATIC_PREFIX/$TIMESTAMP/images" --acl public-read
 else
   echo "-----> Not moving client side assert to s3"
 fi
