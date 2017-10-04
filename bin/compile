@@ -133,6 +133,8 @@ fi
 #
 function cat_npm_debug_log() {
   echo "======> $BUILD_DIR"
+  ls "/app/.npm/"
+  ls "/app/.npm/_logs/"
   cat "/app/.npm/_logs/*.log"
   if [ -f $BUILD_DIR/npm-debug.log ]; then
     cat $BUILD_DIR/npm-debug.log
