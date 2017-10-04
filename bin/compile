@@ -199,7 +199,8 @@ echo "----->    and npm: `$METEOR_NPM --version`"
 # may need devDependencies (e.g. webpack) in order to build the meteor app.
 echo "=====> $METEOR_NPM"
 if [ -e "$APP_SOURCE_DIR"/package.json ]; then
-  $METEOR_NPM install -ddd
+  $METEOR_NPM cache clean --force
+  $METEOR_NPM install -dd
 fi
 echo "====> done npm install"
 # Related to https://github.com/meteor/meteor/issues/2796 and
