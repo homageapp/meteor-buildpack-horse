@@ -133,6 +133,7 @@ fi
 #
 function cat_npm_debug_log() {
   echo "======> $BUILD_DIR"
+  cat "/app/.npm/_logs/*.log"
   if [ -f $BUILD_DIR/npm-debug.log ]; then
     cat $BUILD_DIR/npm-debug.log
   fi
@@ -200,7 +201,7 @@ echo "----->    and npm: `$METEOR_NPM --version`"
 echo "=====> $METEOR_NPM"
 if [ -e "$APP_SOURCE_DIR"/package.json ]; then
   $METEOR_NPM cache clean --force
-  $METEOR_NPM install -dd
+  $METEOR_NPM install
 fi
 echo "====> done npm install"
 # Related to https://github.com/meteor/meteor/issues/2796 and
