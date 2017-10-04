@@ -132,13 +132,13 @@ fi
 # Build the meteor app!
 #
 function cat_npm_debug_log() {
-  echo "$BUILD_DIR"
+  echo "======> $BUILD_DIR"
   if [ -f $BUILD_DIR/npm-debug.log ]; then
     cat $BUILD_DIR/npm-debug.log
   fi
 }
 
-trap cat_npm_debug_log EXIT
+trap cat_npm_debug_log SIGTERM SIGINT EXIT
 
 # Change into the project directory. Once we're there, 'meteor' commands will
 # run with the context of the target release (project .meteor/release) rather
