@@ -132,6 +132,7 @@ fi
 # Build the meteor app!
 #
 function cat_npm_debug_log() {
+  echo "$BUILD_DIR"
   if [ -f $BUILD_DIR/npm-debug.log ]; then
     cat $BUILD_DIR/npm-debug.log
   fi
