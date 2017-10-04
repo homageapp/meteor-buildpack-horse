@@ -200,10 +200,14 @@ echo "----->    and npm: `$METEOR_NPM --version`"
 
 # If we use npm on root, run npm install.  Don't use `--production` here, as we
 # may need devDependencies (e.g. webpack) in order to build the meteor app.
+node install -g yarn
+
 echo "=====> $METEOR_NPM"
 if [ -e "$APP_SOURCE_DIR"/package.json ]; then
-  $METEOR_NPM cache clean --force
-  $METEOR_NPM install
+  pushd .
+  cd $APP_SOURCE_DIR
+  yarn install --ignore-engines
+  popd
 fi
 echo "====> done npm install"
 # Related to https://github.com/meteor/meteor/issues/2796 and
@@ -246,7 +250,7 @@ rmdir $BUNDLE_DEST
 echo "-----> Installing npm production dependencies on built slug"
 if [ -e "$COMPILE_DIR"/app/programs/server/package.json ]; then
   cd "$COMPILE_DIR"/app/programs/server
-  $METEOR_NPM install --production
+  yarn install --production --ignore-engines
   cd "$APP_SOURCE_DIR"
 fi
 
